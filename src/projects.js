@@ -23,22 +23,56 @@ import {
     NumberField,
     BooleanField,
     ReferenceManyField,
-    UrlField
+    UrlField,
+    SelectField,
+    ArrayField,
+    ArrayInput,
+    SingleFieldList,
+    SimpleFormIterator,
+    NumberInput,
+    DateInput,
+    SimpleList
 } from 'react-admin';
 import UrlFieldCustom from './UrlFieldCustom'
+
+const otraslFields = [
+    {id: '0', name: 'Разработка web-приложений'},
+    {id: '1', name: 'Разработка desktop-приложений'},
+    {id: '2', name: 'Разработка серверных приложений'},
+    {id: '3', name: 'Разработка мобильных приложений'},
+    {id: '4', name: 'Программирование встраиваемых систем'},
+    {id: '5', name: 'Системное программирование'},
+    {id: '6', name: 'Разработка игр'},
+];
+
+const stateOfProjectFields = [
+    {id: '0', name: 'Активен'},
+    {id: '1', name: 'Завершён'},
+];
+
+const ndaFields = [
+    { name: 'Разрешено', id: '1' },
+    { name: 'Запрещено', id: '0' },
+];
+
 
 export const ProjectList = props => (
     <List  {...props}>
         <Datagrid>
             <TextField source="project_name" title="Название"/>
             <TextField source="client" title="Клиент" />
-            <TextField source="budget" title="Бюджет"/>
-            <TextField source="nda" title="NDA"/>
-            <TextField source="timings" title="Сроки"/>
-            <UrlFieldCustom source="projectLink" title="Ссылка на проект" />
-            <TextField source="workDirections" title="Направление"/>
-            <TextField source="otrasl" title="Отрасль"/>
-            <TextField source="status" title="Статус" />
+            <NumberField source="budget" title="Бюджет"/>
+            <SelectField source="nda" choices={ndaFields} title="NDA"/>
+            <DateField source="terms_from" title="Срок От"/>
+            <DateField source="terms_to" title="Срок До"/>
+            <UrlFieldCustom source="link_to_project_folder" title="Ссылка на проект" />
+            <ArrayField source="directions_of_work" title="Направление работы">
+                <SimpleList>
+                    <TextField source=""/>
+                </SimpleList>
+            </ArrayField>
+            <SelectField source="otrasl" choices={otraslFields} title="Отрасль"/>
+            <SelectField source="state_of_project" choices={stateOfProjectFields} title="Статус проекта"/>
             <ShowButton />
             <EditButton />
         </Datagrid>
@@ -48,52 +82,126 @@ export const ProjectList = props => (
 export const ProjectEdit = props => (
     <Edit title={<ProjectTitle />} {...props}>
         <SimpleForm>
+            <NumberField source="id" />
             <TextInput source="project_name" />
-            <TextInput source="description"/>
+            <SelectInput source="otrasl" choices={otraslFields}/>
+            <SelectInput source="state_of_project" choices={stateOfProjectFields}/>
             <TextInput source="client" />
-            <TextInput source="budget" />
-            <TextInput source="nda" />
-            <TextInput source="timings"/>
-            <TextInput source="projectLink"/>
-            <TextInput source="workDirections"/>
-            <TextInput source="otrasl"/>
-            <TextInput source="status"/>
-            <TextInput source="troubles"/>
-            <TextInput source="technologies"/>
-            <TextInput source="storeSiteLinks"/>
-            <TextInput source="caseBehanceLinks"/>
-            <TextInput source="presentationLink"/>
+            <SelectInput source="nda" choices={ndaFields} />
+            <NumberInput source="budget" />
+            <TextInput source="description"/>
+            <TextInput source="problems_and_solvings"/>
+            <ArrayInput source="technologies">
+                <SimpleFormIterator>
+                    <TextInput source="technology" />
+                </SimpleFormIterator>
+            </ArrayInput>
+            <ArrayInput source="links_to_store_site">
+                <SimpleFormIterator>
+                    <TextInput source="link" />
+                </SimpleFormIterator>
+            </ArrayInput>
+            <TextInput source="link_to_project_folder"/>
+            <TextInput source="link_to_presentation"/>
+            <ArrayInput source="links_to_case_behance_or_our_site">
+                <SimpleFormIterator>
+                    <TextInput source="link_case" />
+                </SimpleFormIterator>
+            </ArrayInput>
+            <ArrayInput source="teams">
+                <SimpleFormIterator>
+                    <TextInput source="team_work_direction" />
+                    <ArrayInput source="team">
+                        <SimpleFormIterator>
+                            <TextInput source="workers" />
+                        </SimpleFormIterator>
+                    </ArrayInput>
+                </SimpleFormIterator>
+            </ArrayInput>
+            <DateInput source="terms_from"/>
+            <DateInput source="terms_to"/>
+            <ArrayInput source="directions_of_work">
+                <SimpleFormIterator>
+                    <TextInput source="work_direction"/>
+                </SimpleFormIterator>
+            </ArrayInput>
+            <ArrayInput source="nominations">
+                <SimpleFormIterator>
+                    <TextInput source="title" />
+                    <TextInput source="description" />
+                    <TextInput source="link" />
+                </SimpleFormIterator>
+            </ArrayInput>
+            <ArrayInput source="clock_estimation">
+                <SimpleFormIterator>
+                    <DateInput source="clock" />
+                    <TextInput source="direction"/>
+                </SimpleFormIterator>
+            </ArrayInput>
         </SimpleForm>
     </Edit>
 );
 
 export const ProjectCreate = (props) => {
-    const nda = [
-        { name: 'Разрешено', id: 'NdaTrue' },
-        { name: 'Запрещено', id: 'NdaFalse' },
-    ];
+
     return (
         <Create {...props}>
             <SimpleForm>
                 <TextInput source="project_name" resettable/>
-                <TextInput source="description" resettable/>
+                <SelectInput source="otrasl" choices={otraslFields} />
+                <SelectInput source="state_of_project" choices={stateOfProjectFields} />
                 <TextInput source="client" resettable/>
-                <TextInput source="budget" resettable/>
-                <AutocompleteInput
-                    source="nda"
-                    choices={nda}
-                    resettable
-                />
-                <TextInput source="timings" resettable/>
-                <TextInput source="projectLink" resettable/>
-                <TextInput source="workDirections" resettable/>
-                <TextInput source="otrasl" resettable/>
-                <TextInput source="status" resettable/>
-                <TextInput source="troubles" resettable/>
-                <TextInput source="technologies" resettable/>
-                <TextInput source="storeSiteLinks" resettable/>
-                <TextInput source="caseBehanceLinks" resettable/>
-                <TextInput source="presentationLink" resettable/>
+                <SelectInput source="nda" choices={ndaFields} />
+                <NumberInput source="budget" resettable/>
+                <TextInput source="description" resettable/>
+                <TextInput source="problems_and_solvings" resettable/>
+                <ArrayInput source="technologies" >
+                    <SimpleFormIterator>
+                        <TextInput source="technology" resettable/>
+                    </SimpleFormIterator>
+                </ArrayInput>
+                <ArrayInput source="links_to_store_site" >
+                    <SimpleFormIterator>
+                        <TextInput source="link" resettable/>
+                    </SimpleFormIterator>
+                </ArrayInput>
+                <TextInput source="link_to_project_folder" resettable/>
+                <TextInput source="link_to_presentation" resettable/>
+                <ArrayInput source="links_to_case_behance_or_our_site" >
+                    <SimpleFormIterator>
+                        <TextInput source="link_case" resettable/>
+                    </SimpleFormIterator>
+                </ArrayInput>
+                <ArrayInput source="teams" >
+                    <SimpleFormIterator>
+                        <TextInput source="team_work_direction" resettable/>
+                        <ArrayInput source="team" >
+                            <SimpleFormIterator>
+                                <TextInput source="workers" resettable/>
+                            </SimpleFormIterator>
+                        </ArrayInput>
+                    </SimpleFormIterator>
+                </ArrayInput>
+                <DateInput source="terms_from" />
+                <DateInput source="terms_to" />
+                <ArrayInput source="directions_of_work" >
+                    <SimpleFormIterator>
+                        <TextInput source="work_direction" resettable/>
+                    </SimpleFormIterator>
+                </ArrayInput>
+                <ArrayInput source="nominations" >
+                    <SimpleFormIterator>
+                        <TextInput source="title" resettable/>
+                        <TextInput source="description" resettable/>
+                        <TextInput source="link" resettable/>
+                    </SimpleFormIterator>
+                </ArrayInput>
+                <ArrayInput source="clock_estimation" >
+                    <SimpleFormIterator>
+                        <DateInput source="clock" />
+                        <TextInput source="direction" resettable/>
+                    </SimpleFormIterator>
+                </ArrayInput>
             </SimpleForm>
         </Create>
     );
@@ -116,20 +224,60 @@ export const ProjectShow = props => (
     <Show {...props}>
         <SimpleShowLayout>
             <TextField source="project_name" title="Название"/>
-            <TextField source="description" title="Описание"/>
+            <SelectField source="otrasl" choices={otraslFields} title="Отрасль"/>
+            <SelectField source="state_of_project" choices={stateOfProjectFields} title="Статус" />
             <TextField source="client" title="Клиент" />
-            <TextField source="budget" title="Бюджет"/>
-            <TextField source="nda" title="NDA"/>
-            <TextField source="timings" title="Сроки"/>
-            <UrlField source="projectLink" title="Ссылка на проект" />
-            <TextField source="workDirections" title="Направление"/>
-            <TextField source="otrasl" title="Отрасль"/>
-            <TextField source="status" title="Статус" />
-            <TextField source="troubles" title="Проблемы/сложности"/>
-            <TextField source="technologies" title="Технологии"/>
-            <UrlField source="storeSiteLinks" title="ссылка на стор"/>
-            <UrlField source="caseBehanceLinks" title="ссылка на бехансе"/>
-            <UrlField source="presentationLink" title="ссылка на презентацию"/>
+            <SelectField source="nda" choices={ndaFields} title="NDA"/>
+            <NumberField source="budget" title="Бюджет"/>
+            <TextField source="description" title="Описание"/>
+            <TextField source="problems_and_solvings" title="Проблемы/сложности"/>
+            <ArrayField source="technologies" title="Технологии">
+                <SingleFieldList>
+                    <TextField source="technology"/>
+                </SingleFieldList>
+            </ArrayField>
+            <ArrayField source="links_to_store_site" title="Cсылка на стор">
+                <SingleFieldList>
+                    <UrlField source="link"/>
+                </SingleFieldList>
+            </ArrayField>
+            <UrlField source="link_to_project_folder" title="Ссылка на проект" />
+            <UrlField source="link_to_presentation" title="Cсылка на презентацию"/>
+            <ArrayField source="links_to_case_behance_or_our_site" title="Ссылка на бэхансе/наш сайт">
+                <SingleFieldList>
+                    <UrlField source="link_case"/>
+                </SingleFieldList>
+            </ArrayField>
+            <ArrayField source="teams" title="Команды">
+                <Datagrid>
+                    <TextField source="team_work_direction" title="Направление"/>
+                    <ArrayField source="team" title="Команда">
+                        <SingleFieldList>
+                            <TextField source="workers"/>
+                        </SingleFieldList>
+                    </ArrayField>
+                </Datagrid>
+            </ArrayField>
+            <DateField source="terms_from" title="Срок От"/>
+            <DateField source="terms_to" title="Срок До"/>
+            <ArrayField source="directions_of_work" title="Направление работы">
+                <SingleFieldList>
+                    <TextField source="work_direction"/>
+                </SingleFieldList>
+            </ArrayField>
+            <ArrayField source="nominations" title="Номинации">
+                <Datagrid>
+                    <TextField source="title" title="Название"/>
+                    <TextField source="description" title="Описание"/>
+                    <TextField source="link" title="Ссылка"/>
+                </Datagrid>
+            </ArrayField>
+            <ArrayField source="clock_estimation" title="Часы по оценке">
+                <Datagrid>
+                    <DateField source="clock" title="Время"/>
+                    <TextField source="direction" title="Направление работы"/>
+                </Datagrid>
+            </ArrayField>
         </SimpleShowLayout>
     </Show>
 );
